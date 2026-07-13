@@ -1,17 +1,36 @@
 # Rental Management System
 
-A full-stack web application that digitalizes boarding house operations by providing a centralized platform for managing rental properties, tenants, contracts, invoices, utility consumption, deposits, and business insights through an operational dashboard.
+![Dashboard](docs/screenshots/cover.png)
+
+A full-stack web application that digitalizes boarding house operations by centralizing business processes, automating rental workflows, and providing operational insights through an interactive dashboard.
 
 > **Object-Oriented Analysis and Design (OOAD) Course Project**  
-> University of Science, VNU-HCM
+> **University of Science, VNU-HCM**
+
+---
+
+# Table of Contents
+
+- [Business Context](#business-context)
+- [Key Features](#key-features)
+- [Screenshots](#screenshots)
+- [Technology Stack](#technology-stack)
+- [System Architecture](#system-architecture)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [My Role](#my-role)
+- [Future Improvements](#future-improvements)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
 
 ---
 
 # Business Context
 
-Managing boarding houses manually with notebooks or spreadsheets often results in fragmented information, repetitive administrative work, and difficulties in tracking room occupancy, rental contracts, utility consumption, and monthly invoices.
+Managing boarding houses manually using notebooks or spreadsheets often leads to fragmented information, repetitive administrative work, and difficulties in tracking room occupancy, rental contracts, utility consumption, and monthly invoices.
 
-The Rental Management System was developed to centralize these business processes into a single web application, enabling landlords to manage rental operations more efficiently while providing quick visibility into key operational metrics.
+The Rental Management System centralizes rental operations into a single web application, reducing manual processes, improving data consistency, and providing landlords with real-time visibility into occupancy, revenue, tenant information, and outstanding receivables.
 
 ---
 
@@ -20,14 +39,14 @@ The Rental Management System was developed to centralize these business processe
 ## Authentication
 
 - Landlord account registration
-- Secure login with JWT authentication
+- Secure login using JSON Web Token (JWT)
 - Password recovery via email
 
 ---
 
 ## Business Dashboard
 
-The dashboard provides an overview of rental operations, including:
+The dashboard enables landlords to monitor key business metrics in real time, including:
 
 - Room occupancy status
 - Monthly revenue
@@ -47,7 +66,7 @@ The dashboard provides an overview of rental operations, including:
 ## Tenant Management
 
 - Manage tenant profiles
-- Store rental information
+- Store tenant rental information
 - Search tenant records
 
 ---
@@ -76,12 +95,6 @@ The dashboard provides an overview of rental operations, including:
 
 ---
 
-## Notification Management
-
-- View and manage system notifications
-
----
-
 ## System Settings
 
 - Manage boarding house information
@@ -95,35 +108,57 @@ The dashboard provides an overview of rental operations, including:
 
 ![Login](docs/screenshots/login.png)
 
+---
+
 ## Register
 
 ![Register](docs/screenshots/register.png)
+
+---
 
 ## Dashboard
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
+---
+
 ## Room Management
 
 ![Rooms](docs/screenshots/rooms.png)
+
+---
 
 ## Tenant Management
 
 ![Tenants](docs/screenshots/tenants.png)
 
+---
+
 ## Contract Management
 
 ![Contracts](docs/screenshots/contracts.png)
+
+---
 
 ## Invoice Management
 
 ![Invoices](docs/screenshots/invoices.png)
 
+---
+
 ## Utility Management
 
 ![Utilities](docs/screenshots/utilities.png)
 
-## Settings
+---
+
+## Service Management
+
+![Services](docs/screenshots/services.png)
+
+---
+
+## System Settings
 
 ![Settings](docs/screenshots/settings.png)
 
@@ -131,27 +166,27 @@ The dashboard provides an overview of rental operations, including:
 
 # Technology Stack
 
-### Backend
+## Backend
 
 - Node.js
 - Express.js
 - RESTful API
-- JWT Authentication
+- JSON Web Token (JWT)
 - bcryptjs
 - Multer
 - Nodemailer
 
-### Frontend
+## Frontend
 
 - HTML5
 - CSS3
 - JavaScript (Vanilla JavaScript)
 
-### Database
+## Database
 
 - Microsoft SQL Server
 
-### Tools
+## Development Tools
 
 - Git
 - GitHub
@@ -163,13 +198,27 @@ The dashboard provides an overview of rental operations, including:
 # System Architecture
 
 ```text
-Frontend (HTML/CSS/JavaScript)
-            │
-            ▼
-      Express RESTful API
-            │
-            ▼
-    Microsoft SQL Server
+                           +----------------------+
+                           |      Frontend        |
+                           | HTML • CSS • JS      |
+                           +----------+-----------+
+                                      |
+                              HTTP / REST API
+                                      |
+                                      ▼
+                           +----------------------+
+                           |   Express Backend    |
+                           | Authentication       |
+                           | Business Logic       |
+                           +----------+-----------+
+                                      |
+                                SQL Queries
+                                      |
+                                      ▼
+                           +----------------------+
+                           | Microsoft SQL Server |
+                           |      Database        |
+                           +----------------------+
 ```
 
 ---
@@ -185,12 +234,12 @@ Rental-Management-System
 │   │   ├── controllers
 │   │   ├── middlewares
 │   │   ├── routes
-│   │   ├── utils
 │   │   ├── app.js
 │   │   └── server.js
 │   ├── package.json
+│   ├── package-lock.json
 │   ├── .env.example
-│   
+│   └── .gitignore
 │
 ├── frontend
 │   ├── admin
@@ -220,16 +269,18 @@ git clone https://github.com/huyentrann204/rental-management-system.git
 
 ---
 
-## Backend
+## Backend Setup
+
+Install dependencies:
 
 ```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file using `.env.example` as a template.
+Create a `.env` file based on `.env.example`.
 
-Run the backend:
+Start the backend server:
 
 ```bash
 npm start
@@ -241,7 +292,7 @@ or
 node src/server.js
 ```
 
-Backend URL
+Backend URL:
 
 ```
 http://localhost:3000
@@ -249,9 +300,9 @@ http://localhost:3000
 
 ---
 
-## Database
+## Database Setup
 
-Import
+Import the SQL script:
 
 ```
 database/csdl_quanlytro.sql
@@ -261,7 +312,7 @@ into Microsoft SQL Server.
 
 ---
 
-## Frontend
+## Frontend Setup
 
 Run
 
@@ -269,7 +320,7 @@ Run
 frontend/index.html
 ```
 
-using **Live Server**.
+using **Live Server** in Visual Studio Code.
 
 ---
 
@@ -294,18 +345,18 @@ EMAIL_PASSWORD=your_email_app_password
 
 # My Role
 
-Although this project was completed as part of a university team assignment, I was responsible for designing and developing the complete software system, including:
+Although this project was developed as part of a university team assignment, I was responsible for the end-to-end software development, including:
 
 - Business requirement analysis
 - Database design
 - System architecture design
-- Backend development using Node.js and Express
+- Backend development using Node.js and Express.js
 - RESTful API development
-- JWT authentication and authorization
+- Authentication and authorization using JWT
 - Microsoft SQL Server integration
 - Frontend development using HTML, CSS, and JavaScript
 - Business dashboard implementation
-- Room, tenant, contract, invoice, utility, deposit, notification, and settings modules
+- Development of room, tenant, contract, invoice, utility, deposit, notification, and settings modules
 - System integration, testing, and deployment
 
 ---
@@ -316,7 +367,7 @@ Although this project was completed as part of a university team assignment, I w
 - Role-based access control
 - Online payment integration
 - Maintenance request management
-- Business analytics dashboard
+- Interactive business intelligence dashboard
 - Docker deployment
 - Unit and integration testing
 
@@ -330,4 +381,4 @@ This project was developed as part of the **Object-Oriented Analysis and Design 
 
 # License
 
-This project is intended for educational psurposes.
+This project is intended for educational purposes.
