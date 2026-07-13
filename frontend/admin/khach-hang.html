@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Khách Hàng - MotelMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* CẤU HÌNH BIẾN MÀU ĐỂ CHUYỂN DARK MODE */
+        :root { 
+            --sidebar-bg: #F4FBF4; --main-bg: #f9fafb; --card-bg: #ffffff; --active-green: #BEE9BE; 
+            --text-main: #4b5563;
+        }
+        body.dark { 
+            --sidebar-bg: #111111; --main-bg: #000000; --card-bg: #1a1a1a; 
+            --text-main: #9ca3af;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--main-bg); color: var(--text-main); transition: 0.3s; }
+        .sidebar-bg { background-color: var(--sidebar-bg); }
+        .nav-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.75rem; font-weight: 600; color: var(--text-main); }
+        .nav-active { background-color: var(--active-green) !important; color: #2E7D32 !important; }
+        
+        /* Bảng thông tin luôn nền trắng cố định */
+        .card-style { background-color: #ffffff !important; border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); color: #4b5563 !important; }
+        .dark .card-style { border: 1px solid #27272a; }
+
+        .transition-all { transition: all 0.2s ease-in-out; }
+        #search-results a:last-child { border-bottom: none; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 sidebar-bg h-full border-r border-gray-100 dark:border-zinc-800 flex flex-col shrink-0 transition-colors">
+        <div class="p-6 mb-4 flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white text-xl shadow-lg">
+                <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <span class="font-bold text-xl text-green-800 dark:text-green-400">MotelMS</span>
+        </div>
+        <nav class="flex-1 px-4 overflow-y-auto">
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Nghiệp vụ</p>
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-line w-6 text-xl"></i> <span>Tổng Quan</span></a>
+                <a href="hoa-don.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar w-6 text-xl"></i> <span>Hóa Đơn</span></a>
+            </div>
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Dữ liệu</p>
+                <a href="phong.html" class="nav-item"><i class="fa-solid fa-door-open w-6 text-xl"></i> <span>Phòng</span></a>
+                <a href="dich-vu.html" class="nav-item"><i class="fa-solid fa-wifi w-6 text-xl"></i> <span>Dịch Vụ</span></a>
+                <a href="dien-nuoc.html" class="nav-item"><i class="fa-solid fa-bolt w-6 text-xl"></i> <span>Điện Nước</span></a>
+                <a href="khach-hang.html" class="nav-item nav-active"><i class="fa-solid fa-user-group w-6 text-xl"></i> <span>Khách Hàng</span></a>
+                <a href="hop-dong.html" class="nav-item"><i class="fa-solid fa-file-contract w-6 text-xl"></i> <span>Hợp Đồng</span></a>
+            </div>
+
+            <div class="mt-auto pb-6 border-t border-gray-100 dark:border-zinc-800 pt-4">
+                <p class="px-3 text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase mb-4 tracking-widest">Hệ thống</p>
+                <a href="cai-dat.html" class="nav-item dark:text-zinc-300">
+                    <i class="fa-solid fa-gear w-6 text-xl"></i> <span>Cài Đặt Chung</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-8 shrink-0 transition-colors">
+            <div class="relative w-96 group ml-4"> 
+                <div class="bg-gray-50 dark:bg-zinc-900 px-4 py-2 rounded-full border border-gray-100 dark:border-zinc-800 flex items-center gap-3 text-gray-400 focus-within:border-green-300 transition-all shadow-sm">
+                    <i class="fas fa-search text-xs"></i>
+                    <input type="text" id="global-search" oninput="liveSearch(this.value)" placeholder="Tìm kiếm tính năng..." 
+                        class="bg-transparent outline-none text-sm w-full text-gray-600 dark:text-zinc-300">
+                </div>
+                <div id="search-results" class="hidden absolute top-full left-0 w-full bg-white dark:bg-[#121212] shadow-2xl border border-gray-100 dark:border-zinc-800 rounded-b-xl z-50 mt-1 max-h-64 overflow-y-auto">
+                </div>
+            </div>           
+            <div class="relative w-96 flex items-center gap-3 text-gray-400 invisible">
+                <input type="text" id="searchTenant" class="bg-transparent outline-none text-sm w-full py-2">
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="resetFormState(); openModal('modalTenant')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:bg-blue-700 transition-all">
+                    + Thêm Khách Hàng
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 p-10 overflow-y-auto">
+            <h1 class="font-bold text-2xl text-gray-800 dark:text-zinc-100 uppercase mb-8">DANH SÁCH KHÁCH THUÊ</h1>
+            
+            <div class="card-style p-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                            <tr>
+                                <th class="pb-4">Họ và Tên</th>
+                                <th class="pb-4">Giới tính</th>
+                                <th class="pb-4">Số điện thoại</th>
+                                <th class="pb-4">Địa chỉ</th>
+                                <th class="pb-4">Mã Hợp Đồng</th>
+                                <th class="pb-4 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tenantDataBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalTenant" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 transition-all">
+        <div class="bg-white dark:bg-[#1a1a1a] rounded-3xl w-full max-w-xl p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modalTitle" class="font-bold text-xl text-gray-800 dark:text-zinc-100 italic">Thông tin khách thuê</h3>
+                <button onclick="closeModal('modalTenant')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="tenantForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Họ và tên *</label>
+                        <input type="text" name="full_name" required class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none border border-gray-100 dark:border-zinc-700 font-bold focus:border-blue-500 dark:text-white transition-all">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Giới tính</label>
+                        <select name="gender" class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none border border-gray-100 dark:border-zinc-700 font-bold dark:text-white">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Số điện thoại</label>
+                        <input type="tel" name="phone" class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none border border-gray-100 dark:border-zinc-700 font-bold focus:border-blue-500 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Số CCCD</label>
+                        <input type="text" name="cccd" class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none border border-gray-100 dark:border-zinc-700 font-bold focus:border-blue-500 dark:text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Địa chỉ thường trú</label>
+                    <input type="text" name="address" class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none border border-gray-100 dark:border-zinc-700 font-bold focus:border-blue-500 dark:text-white">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Email</label>
+                    <input type="email" name="email" class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none border border-gray-100 dark:border-zinc-700 font-bold focus:border-blue-500 dark:text-white">
+                </div>
+
+                <div class="flex gap-4 pt-6">
+                    <button type="button" onclick="closeModal('modalTenant')" class="flex-1 py-3 font-bold text-gray-400">Hủy</button>
+                    <button type="submit" id="btnSave" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all">Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // KIỂM TRA DARK MODE NGAY KHI TẢI TRANG
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+
+        const API_URL = 'http://localhost:3000/api/tenants'; 
+        let editId = null; 
+
+        const getHeaders = () => ({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        });
+
+        async function loadTenants() {
+            const tbody = document.getElementById('tenantDataBody');
+            try {
+                const res = await fetch(API_URL, { headers: getHeaders() });
+                if (!res.ok) throw new Error('Không thể kết nối API');
+                const data = await res.json();
+                
+                tbody.innerHTML = data.map(t => `
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        <td class="py-4 font-bold text-gray-700 uppercase">${t.full_name}</td>
+                        <td class="py-4 text-gray-600">${t.gender || '---'}</td>
+                        <td class="py-4 text-gray-600">${t.phone || '---'}</td>
+                        <td class="py-4 text-gray-600">${t.address || '---'}</td>
+                        <td class="py-4 ${t.contract_id ? 'font-bold text-blue-600 italic underline' : 'text-gray-300'}">
+                            ${t.contract_id ? 'HD-' + t.contract_id : 'Chưa có'}
+                        </td>
+                        <td class="py-4 text-right">
+                            <button onclick='openEditModal(${JSON.stringify(t)})' class="p-2 text-gray-300 hover:text-blue-500 rounded-lg transition-all">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="deleteTenant(${t.tenant_id})" class="p-2 text-gray-300 hover:text-red-500 rounded-lg ml-1 transition-all">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-red-500">Lỗi kết nối Backend tại cổng 3000.</td></tr>`;
+            }
+        }
+
+        function openEditModal(t) {
+            editId = t.tenant_id;
+            document.getElementById('modalTitle').innerText = "Chỉnh sửa khách thuê";
+            const f = document.getElementById('tenantForm');
+            f.full_name.value = t.full_name || "";
+            f.gender.value = t.gender || "Nam";
+            f.phone.value = t.phone || "";
+            f.cccd.value = t.cccd || "";
+            f.address.value = t.address || "";
+            f.email.value = t.email || "";
+            openModal('modalTenant');
+        }
+
+        document.getElementById('tenantForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            btn.innerText = "Đang xử lý...";
+            btn.disabled = true;
+
+            const formData = Object.fromEntries(new FormData(e.target));
+            const method = editId ? 'PUT' : 'POST';
+            const url = editId ? `${API_URL}/${editId}` : API_URL;
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: getHeaders(),
+                    body: JSON.stringify(formData)
+                });
+
+                if (res.ok) {
+                    alert(editId ? "Cập nhật thành công!" : "Thêm mới thành công!");
+                    closeModal('modalTenant');
+                    loadTenants();
+                } else {
+                    const err = await res.json();
+                    alert("Lỗi: " + err.error);
+                }
+            } catch (err) {
+                alert("Lỗi server!");
+            } finally {
+                btn.innerText = "Lưu thông tin";
+                btn.disabled = false;
+            }
+        };
+
+        async function deleteTenant(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa khách hàng này không?")) return;
+            try {
+                const res = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                if (res.ok) {
+                    alert("Đã xóa khách hàng!");
+                    loadTenants();
+                }
+            } catch (err) {
+                alert("Không thể xóa!");
+            }
+        }
+
+        function resetFormState() {
+            editId = null;
+            document.getElementById('modalTitle').innerText = "Thông tin khách thuê";
+            document.getElementById('tenantForm').reset();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
+        window.onload = loadTenants;
+    </script>
+
+    <script type="module">
+        const menuItems = [
+            { name: 'Tổng Quan', link: 'dashboard.html', icon: 'fa-chart-line' },
+            { name: 'Hóa Đơn', link: 'hoa-don.html', icon: 'fa-file-invoice-dollar' },
+            { name: 'Phòng', link: 'phong.html', icon: 'fa-door-open' },
+            { name: 'Dịch Vụ', link: 'dich-vu.html', icon: 'fa-wifi' },
+            { name: 'Điện Nước', link: 'dien-nuoc.html', icon: 'fa-bolt' },
+            { name: 'Khách Hàng', link: 'khach-hang.html', icon: 'fa-user-group' },
+            { name: 'Hợp Đồng', link: 'hop-dong.html', icon: 'fa-file-contract' },
+            { name: 'Cài Đặt', link: 'cai-dat.html', icon: 'fa-gear' }
+        ];
+
+        window.liveSearch = (val) => {
+            const res = document.getElementById('search-results');
+            const term = val.toLowerCase().trim();
+            if (!term) { res.classList.add('hidden'); return; }
+            const filtered = menuItems.filter(item => item.name.toLowerCase().includes(term));
+            res.classList.remove('hidden');
+            res.innerHTML = filtered.length > 0 
+                ? filtered.map(item => `
+                    <a href="${item.link}" class="flex items-center gap-3 p-3 hover:bg-green-50 dark:hover:bg-zinc-800 transition border-b border-gray-50 dark:border-zinc-800">
+                        <i class="fa-solid ${item.icon} text-green-600 w-5 text-center"></i>
+                        <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">${item.name}</span>
+                    </a>`).join('')
+                : '<p class="p-4 text-xs text-gray-400 italic text-center">Không tìm thấy tính năng</p>';
+        };
+        document.addEventListener('click', (e) => { if (!e.target.closest('.group')) document.getElementById('search-results').classList.add('hidden'); });
+    </script>
+</body>
+</html>

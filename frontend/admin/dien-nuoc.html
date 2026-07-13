@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghi Chỉ Số Điện Nước - MotelMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    
+    <style>
+        /* CẤU HÌNH BIẾN MÀU ĐỂ CHUYỂN DARK MODE */
+        :root { 
+            --sidebar-bg: #F4FBF4; --main-bg: #f9fafb; --card-bg: #ffffff; --active-green: #BEE9BE; 
+            --text-main: #4b5563; --text-title: #111827;
+        }
+        body.dark { 
+            --sidebar-bg: #111111; --main-bg: #000000; --card-bg: #1a1a1a; 
+            --text-main: #9ca3af; --text-title: #f3f4f6;
+        }
+
+        /* FIX FONT CHỮ VÀ BỎ IN NGHIÊNG */
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-main); 
+            transition: 0.3s; 
+        }
+        
+        /* Class tiêu đề mới để đồng bộ hệ thống */
+        .page-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 800;
+            font-style: normal; /* Đảm bảo không bị in nghiêng */
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-bg { background-color: var(--sidebar-bg); }
+        .nav-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.75rem; font-weight: 600; color: var(--text-main); }
+        .nav-active { background-color: var(--active-green) !important; color: #2E7D32 !important; }
+        
+        /* Bảng thông tin luôn nền trắng kể cả khi ở Dark Mode */
+        .card-style { background-color: #ffffff !important; border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); color: #4b5563 !important; }
+        .dark .card-style { border: 1px solid #27272a; }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .flatpickr-monthSelect-month.selected { background: #2563eb !important; }
+
+        /* Search result dark mode support */
+        #search-results a:last-child { border-bottom: none; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 sidebar-bg h-full border-r border-gray-100 dark:border-zinc-800 flex flex-col shrink-0 transition-colors">
+        <div class="p-6 mb-4 flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white text-xl shadow-lg">
+                <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <span class="font-bold text-xl text-green-800 dark:text-green-400">MotelMS</span>
+        </div>
+        <nav class="flex-1 px-4 overflow-y-auto">
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Nghiệp vụ</p>
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-line w-6 text-xl"></i> <span>Tổng Quan</span></a>
+                <a href="hoa-don.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar w-6 text-xl"></i> <span>Hóa Đơn</span></a>
+            </div>
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Dữ liệu</p>
+                <a href="phong.html" class="nav-item"><i class="fa-solid fa-door-open w-6 text-xl"></i> <span>Phòng</span></a>
+                <a href="dich-vu.html" class="nav-item"><i class="fa-solid fa-wifi w-6 text-xl"></i> <span>Dịch Vụ</span></a>
+                <a href="dien-nuoc.html" class="nav-item nav-active"><i class="fa-solid fa-bolt w-6 text-xl"></i> <span>Điện Nước</span></a>
+                <a href="khach-hang.html" class="nav-item"><i class="fa-solid fa-user-group w-6 text-xl"></i> <span>Khách Hàng</span></a>
+                <a href="hop-dong.html" class="nav-item"><i class="fa-solid fa-file-contract w-6 text-xl"></i> <span>Hợp Đồng</span></a>
+            </div>
+
+            <div class="mt-auto pb-6 border-t border-gray-100 dark:border-zinc-800 pt-4">
+                <p class="px-3 text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase mb-4 tracking-widest">Hệ thống</p>
+                <a href="cai-dat.html" class="nav-item dark:text-zinc-300">
+                    <i class="fa-solid fa-gear w-6 text-xl"></i> <span>Cài Đặt Chung</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-8 shrink-0 transition-colors">
+            <div class="relative w-96 group ml-4"> 
+                <div class="bg-gray-50 dark:bg-zinc-900 px-4 py-2 rounded-full border border-gray-100 dark:border-zinc-800 flex items-center gap-3 text-gray-400 focus-within:border-green-300 transition-all shadow-sm">
+                    <i class="fas fa-search text-xs"></i>
+                    <input type="text" id="global-search" oninput="liveSearch(this.value)" placeholder="Tìm kiếm tính năng..." 
+                        class="bg-transparent outline-none text-sm w-full text-gray-600 dark:text-zinc-300">
+                </div>
+                <div id="search-results" class="hidden absolute top-full left-0 w-full bg-white dark:bg-[#121212] shadow-2xl border border-gray-100 dark:border-zinc-800 rounded-b-xl z-50 mt-1 max-h-64 overflow-y-auto">
+                </div>
+            </div>
+            <div class="relative w-96 flex items-center gap-3 text-gray-400 invisible">
+                <input type="text" id="searchReading" class="bg-transparent outline-none text-sm w-full py-2">
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="resetUtilityModal(); openModal('modalUtility')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:bg-blue-700">
+                    + Chốt Chỉ Số Mới
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 p-10 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="page-title text-2xl text-gray-800 dark:text-zinc-100 uppercase">GHI CHỈ SỐ ĐIỆN NƯỚC</h1>
+                
+                <div class="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2 px-4 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 transition-colors">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Kỳ hóa đơn:</span>
+                    <div class="flex items-center gap-2 cursor-pointer group">
+                        <input type="text" id="filterPeriod" 
+                            class="text-sm font-bold outline-none bg-transparent cursor-pointer text-blue-600 w-32"
+                            placeholder="Chọn tháng..." readonly>
+                        <i class="fa-solid fa-calendar-days text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-style p-8 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                            <tr>
+                                <th class="pb-4">Phòng</th>
+                                <th class="pb-4">Kỳ chốt</th>
+                                <th class="pb-4 text-center bg-yellow-50/50">Điện (Cũ)</th>
+                                <th class="pb-4 text-center bg-yellow-50/50">Điện (Mới)</th>
+                                <th class="pb-4 text-center bg-blue-50/50">Nước (Cũ)</th>
+                                <th class="pb-4 text-center bg-blue-50/50">Nước (Mới)</th>
+                                <th class="pb-4 text-right">Tiêu dùng</th>
+                                <th class="pb-4 text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="utilityDataBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalUtility" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 transition-all">
+        <div class="bg-white dark:bg-[#1a1a1a] rounded-3xl w-[600px] p-8 shadow-2xl">
+            <h3 class="font-bold text-xl text-gray-800 dark:text-zinc-100 mb-6 text-center">Ghi chỉ số hàng tháng</h3>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phòng đang thuê</label>
+                    <select id="selectRoom" class="w-full mt-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none font-bold shadow-sm dark:text-white border-none transition-colors">
+                        <option value="">-- Chọn phòng để ghi số --</option>
+                    </select>
+                </div>
+
+                <div class="p-5 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-2xl border border-yellow-100 dark:border-yellow-900/20">
+                    <div class="text-[11px] font-black text-yellow-700 dark:text-yellow-500 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> CHỈ SỐ ĐIỆN (kWh)
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-zinc-900 p-3 rounded-xl border border-gray-100 dark:border-zinc-800">
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Điện cũ (Gốc)</label>
+                            <input type="number" id="elecOld" placeholder="0" class="w-full bg-transparent font-black text-2xl outline-none dark:text-white transition-colors">
+                        </div>
+                        <div class="bg-white dark:bg-zinc-900 p-3 rounded-xl border-2 border-yellow-400 shadow-sm">
+                            <label class="text-[9px] font-bold text-yellow-600 uppercase block mb-1">Điện mới</label>
+                            <input type="number" id="elecNew" placeholder="0" class="w-full bg-transparent font-black text-2xl text-yellow-700 outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-900/20">
+                    <div class="text-[11px] font-black text-blue-700 dark:text-blue-500 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-droplet"></i> CHỈ SỐ NƯỚC (m3)
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-zinc-900 p-3 rounded-xl border border-gray-100 dark:border-zinc-800">
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Nước cũ (Gốc)</label>
+                            <input type="number" id="waterOld" placeholder="0" class="w-full bg-transparent font-black text-2xl outline-none dark:text-white transition-colors">
+                        </div>
+                        <div class="bg-white dark:bg-zinc-900 p-3 rounded-xl border-2 border-blue-400 shadow-sm">
+                            <label class="text-[9px] font-bold text-blue-600 uppercase block mb-1">Nước mới</label>
+                            <input type="number" id="waterNew" placeholder="0" class="w-full bg-transparent font-black text-2xl text-blue-700 outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button onclick="closeModal('modalUtility')" class="flex-1 py-3 font-bold text-gray-400">Hủy</button>
+                    <button id="saveUtilityBtn" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg">Lưu chỉ số</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    
+    <script type="module" src="../assets/js/dien-nuoc.js"></script>
+
+    <script>
+        // KIỂM TRA DARK MODE NGAY KHI TẢI TRANG
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#filterPeriod", {
+                plugins: [
+                    new monthSelectPlugin({
+                        shorthand: true, 
+                        dateFormat: "Y-m", 
+                        altFormat: "F Y"   
+                    })
+                ],
+                defaultDate: new Date(2026, 1), 
+                onChange: function(selectedDates, dateStr) {
+                    window.fetchReadings(); 
+                }
+            });
+        });
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
+        function resetUtilityModal() {
+            const saveBtn = document.getElementById('saveUtilityBtn');
+            document.getElementById('selectRoom').value = '';
+            document.getElementById('elecOld').value = '';
+            document.getElementById('elecNew').value = '';
+            document.getElementById('waterOld').value = '';
+            document.getElementById('waterNew').value = '';
+            document.getElementById('elecOld').readOnly = false;
+            document.getElementById('waterOld').readOnly = false;
+            saveBtn.innerText = "Lưu chỉ số";
+            delete saveBtn.dataset.mode;
+            delete saveBtn.dataset.id;
+        }
+    </script>
+
+    <script type="module">
+        import { apiRequest } from '../assets/js/api.js';
+
+        const menuItems = [
+            { name: 'Tổng Quan', link: 'dashboard.html', icon: 'fa-chart-line' },
+            { name: 'Hóa Đơn', link: 'hoa-don.html', icon: 'fa-file-invoice-dollar' },
+            { name: 'Phòng', link: 'phong.html', icon: 'fa-door-open' },
+            { name: 'Dịch Vụ', link: 'dich-vu.html', icon: 'fa-wifi' },
+            { name: 'Điện Nước', link: 'dien-nuoc.html', icon: 'fa-bolt' },
+            { name: 'Khách Hàng', link: 'khach-hang.html', icon: 'fa-user-group' },
+            { name: 'Hợp Đồng', link: 'hop-dong.html', icon: 'fa-file-contract' },
+            { name: 'Cài Đặt', link: 'cai-dat.html', icon: 'fa-gear' }
+        ];
+
+        window.liveSearch = (val) => {
+            const res = document.getElementById('search-results');
+            const term = val.toLowerCase().trim();
+            if (!term) { res.classList.add('hidden'); return; }
+
+            const filtered = menuItems.filter(item => item.name.toLowerCase().includes(term));
+            res.classList.remove('hidden');
+            
+            if (filtered.length > 0) {
+                res.innerHTML = filtered.map(item => `
+                    <a href="${item.link}" class="flex items-center gap-3 p-3 hover:bg-green-50 dark:hover:bg-zinc-800 transition border-b border-gray-50 dark:border-zinc-800">
+                        <i class="fa-solid ${item.icon} text-green-600 w-5 text-center"></i>
+                        <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">${item.name}</span>
+                    </a>
+                `).join('');
+            } else {
+                res.innerHTML = '<p class="p-4 text-xs text-gray-400 italic text-center">Không tìm thấy tính năng này</p>';
+            }
+        };
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.group')) {
+                document.getElementById('search-results').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

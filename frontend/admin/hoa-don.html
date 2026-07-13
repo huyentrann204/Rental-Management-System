@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Hóa Đơn - MotelMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    
+    <style>
+        :root { --sidebar-bg: #F4FBF4; --main-bg: #f9fafb; --card-bg: #ffffff; --active-green: #BEE9BE; }
+        body.dark { --sidebar-bg: #111111; --main-bg: #000000; --card-bg: #1a1a1a; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--main-bg); transition: 0.3s; }
+        .sidebar-bg { background-color: var(--sidebar-bg); }
+        .nav-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.75rem; font-weight: 600; color: #4b5563; transition: 0.2s; }
+        .nav-item:hover { background-color: rgba(0,0,0,0.05); }
+        .nav-active { background-color: var(--active-green) !important; color: #2E7D32 !important; }
+        .card-style { background-color: var(--card-bg); border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        th { text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; color: #9ca3af; padding: 10px 20px; text-align: left; }
+        td { background: var(--card-bg); padding: 15px 20px; border-top: 1px solid rgba(0,0,0,0.02); border-bottom: 1px solid rgba(0,0,0,0.02); cursor: pointer; }
+        td:first-child { border-left: 1px solid rgba(0,0,0,0.02); border-radius: 15px 0 0 15px; }
+        td:last-child { border-right: 1px solid rgba(0,0,0,0.02); border-radius: 0 15px 15px 0; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 sidebar-bg h-full border-r border-gray-100 dark:border-zinc-800 flex flex-col shrink-0">
+        <div class="p-6 mb-4 flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white text-xl shadow-lg shadow-green-100">
+                <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <span class="font-bold text-xl text-green-800 dark:text-green-400">MotelMS</span>
+        </div>
+        <nav class="flex-1 px-4 overflow-y-auto">
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Nghiệp vụ</p>
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-line w-6 text-xl"></i> <span>Tổng Quan</span></a>
+                <a href="hoa-don.html" class="nav-item nav-active"><i class="fa-solid fa-file-invoice-dollar w-6 text-xl"></i> <span>Hóa Đơn</span></a>
+            </div>
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Dữ liệu</p>
+                <a href="phong.html" class="nav-item"><i class="fa-solid fa-door-open w-6 text-xl"></i> <span>Phòng</span></a>
+                <a href="dich-vu.html" class="nav-item"><i class="fa-solid fa-wifi w-6 text-xl"></i> <span>Dịch Vụ</span></a>
+                <a href="dien-nuoc.html" class="nav-item"><i class="fa-solid fa-bolt w-6 text-xl"></i> <span>Điện Nước</span></a>
+                <a href="khach-hang.html" class="nav-item"><i class="fa-solid fa-user-group w-6 text-xl"></i> <span>Khách Hàng</span></a>
+                <a href="hop-dong.html" class="nav-item"><i class="fa-solid fa-file-contract w-6 text-xl"></i> <span>Hợp Đồng</span></a>
+            </div>
+            <div class="mt-auto pb-6 border-t border-gray-100 dark:border-zinc-800 pt-4">
+                <a href="cai-dat.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-gear w-6 text-xl"></i> <span>Cài Đặt Chung</span></a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white dark:bg-black border-b border-gray-100 flex items-center justify-between px-8 shrink-0 relative transition-colors">
+            <div class="relative w-96 group">
+                <div class="bg-gray-50 dark:bg-zinc-900 px-4 py-2 rounded-full border border-gray-100 dark:border-zinc-800 flex items-center gap-3 text-gray-400 shadow-sm">
+                    <i class="fas fa-search text-xs"></i>
+                    <input type="text" id="global-search" oninput="window.liveSearch(this.value)" placeholder="Tìm kiếm tính năng..." class="bg-transparent outline-none text-sm w-full text-gray-600 dark:text-zinc-300">
+                </div>
+                <div id="search-results" class="hidden absolute top-full left-0 w-full bg-white dark:bg-[#121212] shadow-2xl border border-gray-100 dark:border-zinc-800 rounded-b-xl z-50 mt-1 max-h-64 overflow-y-auto"></div>
+            </div>
+            <button onclick="window.openGenerateModal()" class="bg-green-600 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-green-700 transition-all">
+                <i class="fa-solid fa-plus mr-2"></i> Xuất Hóa Đơn Tháng
+            </button>
+        </header>
+
+        <div class="flex-1 p-10 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="font-bold text-2xl text-gray-800 dark:text-zinc-100 uppercase tracking-wide">QUẢN LÝ HÓA ĐƠN</h1>
+                <div class="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2.5 px-5 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
+                    <select id="filterStatus" onchange="window.loadInvoices()" class="text-xs font-bold outline-none bg-transparent text-gray-500">
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="unpaid">Chưa thanh toán</option>
+                        <option value="paid">Đã thanh toán</option>
+                    </select>
+                    <div class="h-4 w-px bg-gray-200"></div>
+                    <div class="flex items-center gap-2 cursor-pointer group">
+                        <input type="text" id="filterInvoicePeriod" class="text-xs font-black outline-none bg-transparent cursor-pointer text-green-600 w-32" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-style p-6">
+                <table id="invoiceTable">
+                    <thead>
+                        <tr class="text-gray-400">
+                            <th>Phòng</th>
+                            <th>Khách Thuê</th>
+                            <th>Kỳ</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th class="text-right">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalGenerateInvoice" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-[#1a1a1a] rounded-3xl w-full max-w-[550px] p-8 shadow-2xl">
+            <h3 class="font-black text-xl text-green-700 mb-6 text-center uppercase tracking-wider italic">Chốt hóa đơn tháng</h3>
+            <form id="generateInvoiceForm" class="space-y-5 text-sm">
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Chọn Hợp Đồng (Phòng)</label>
+                    <select id="selectContract" name="contract_id" required class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none font-bold border dark:text-white dark:border-zinc-700"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Tháng/Năm</label>
+                        <input type="month" id="invoicePeriodInput" required class="w-full bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none font-bold border dark:text-white dark:border-zinc-700">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Dịch vụ dùng thêm</label>
+                        <div id="extraServicesList" class="bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl border dark:border-zinc-700 max-h-32 overflow-y-auto"></div>
+                    </div>
+                </div>
+                <div class="flex gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+                    <button type="button" onclick="window.closeModal('modalGenerateInvoice')" class="flex-1 py-3 font-bold text-gray-400 uppercase text-xs">Hủy</button>
+                    <button type="submit" class="flex-1 py-3 bg-green-600 text-white rounded-xl font-black shadow-lg uppercase text-xs">Xuất hóa đơn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalDetail" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-[#1a1a1a] rounded-3xl w-full max-w-[450px] p-8 shadow-2xl border-t-4 border-green-500">
+            <h3 class="font-black text-lg text-gray-800 dark:text-white mb-6 uppercase text-center border-b pb-4 tracking-tighter">Bảng kê chi tiết</h3>
+            <div id="invoiceDetailContent" class="space-y-3 font-semibold text-gray-600 dark:text-gray-300"></div>
+            <button onclick="window.closeModal('modalDetail')" class="w-full mt-6 py-3 bg-gray-100 dark:bg-zinc-800 font-bold text-gray-400 rounded-xl text-xs uppercase">Đóng</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    
+    <script type="module">
+        import { apiRequest } from '../assets/js/api.js';
+
+        let currentFilterMonth = new Date().getMonth() + 1;
+        let currentFilterYear = new Date().getFullYear();
+
+        // PHẦN 1: TÌM KIẾM TÍNH NĂNG (LIVE SEARCH)
+        const menuItems = [
+            { name: 'Tổng Quan', link: 'dashboard.html', icon: 'fa-chart-line' },
+            { name: 'Hóa Đơn', link: 'hoa-don.html', icon: 'fa-file-invoice-dollar' },
+            { name: 'Phòng', link: 'phong.html', icon: 'fa-door-open' },
+            { name: 'Dịch Vụ', link: 'dich-vu.html', icon: 'fa-wifi' },
+            { name: 'Điện Nước', link: 'dien-nuoc.html', icon: 'fa-bolt' },
+            { name: 'Khách Hàng', link: 'khach-hang.html', icon: 'fa-user-group' },
+            { name: 'Hợp Đồng', link: 'hop-dong.html', icon: 'fa-file-contract' },
+            { name: 'Cài Đặt', link: 'cai-dat.html', icon: 'fa-gear' }
+        ];
+
+        window.liveSearch = (val) => {
+            const res = document.getElementById('search-results');
+            const term = val.toLowerCase().trim();
+            if (!term) { res.classList.add('hidden'); return; }
+            const filtered = menuItems.filter(item => item.name.toLowerCase().includes(term));
+            res.classList.remove('hidden');
+            res.innerHTML = filtered.length ? filtered.map(item => `
+                <a href="${item.link}" class="flex items-center gap-3 p-3 hover:bg-green-50 transition border-b border-gray-50 dark:border-zinc-800">
+                    <i class="fa-solid ${item.icon} text-green-600 w-5 text-center"></i>
+                    <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">${item.name}</span>
+                </a>`).join('') : '<p class="p-4 text-xs text-gray-400 italic text-center">Không tìm thấy</p>';
+        };
+
+        // PHẦN 2: LOGIC HÓA ĐƠN
+        window.loadInvoices = async () => {
+            const status = document.getElementById('filterStatus').value;
+            const res = await apiRequest(`/invoice/list?status=${status}&month=${currentFilterMonth}&year=${currentFilterYear}`);
+            const tbody = document.getElementById('invoiceTableBody');
+            
+            const invoices = res && res.data ? res.data : [];
+            tbody.innerHTML = invoices.length ? invoices.map(i => `
+                <tr onclick="window.showDetail(${i.invoice_id})">
+                    <td class="font-bold text-green-600">#${i.room_code}</td>
+                    <td>${i.full_name}</td>
+                    <td>Tháng ${i.month}/${i.year}</td>
+                    <td class="font-black">${Number(i.total).toLocaleString()}đ</td>
+                    <td>
+                        <span class="px-3 py-1 rounded-full text-[10px] uppercase font-bold 
+                            ${i.status_invoice === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                            ${i.status_invoice === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        ${i.status_invoice === 'unpaid' ? `<button onclick="event.stopPropagation(); window.markAsPaid(${i.invoice_id})" class="text-blue-500 hover:underline text-xs font-bold">Thanh toán</button>` : `<i class="fa-solid fa-check-double text-green-500"></i>`}
+                    </td>
+                </tr>`).join('') : '<tr><td colspan="6" class="text-center py-10 text-gray-400 italic">Chưa có hóa đơn nào</td></tr>';
+        };
+
+        window.showDetail = async (id) => {
+            const res = await apiRequest(`/invoice/detail/${id}`);
+            const items = res && res.data ? res.data : [];
+            document.getElementById('invoiceDetailContent').innerHTML = items.map(item => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-tighter">${item.description_invoice}</span>
+                    <span class="font-black text-gray-700 dark:text-gray-200">${Number(item.amount).toLocaleString()}đ</span>
+                </div>`).join('');
+            window.openModal('modalDetail');
+        };
+
+        // PHẦN 3: TẢI DỮ LIỆU MODAL (Hợp đồng & Dịch vụ)
+        window.loadFormData = async () => {
+    try {
+        const [resContracts, resServices] = await Promise.all([
+            apiRequest('/contract/list'),
+            apiRequest('/services/list')
+        ]);
+
+        // 1. Đổ dữ liệu Hợp đồng (Giữ nguyên)
+        const contracts = resContracts && resContracts.data ? resContracts.data : [];
+        const selectContract = document.getElementById('selectContract');
+        if (selectContract) {
+            selectContract.innerHTML = '<option value="">-- Chọn hợp đồng --</option>' + 
+                contracts.map(c => `<option value="${c.contract_id}">Phòng ${c.room_code} - ${c.full_name}</option>`).join('');
+        }
+
+        // 2. Đổ dữ liệu Dịch vụ dùng thêm (Sửa điều kiện lọc)
+        const services = resServices && resServices.data ? resServices.data : [];
+        const container = document.getElementById('extraServicesList');
+
+        if (container) {
+            // LỌC: Loại bỏ Điện và Nước (vì đã tự tính), chỉ hiện các dịch vụ còn lại
+            const additionalServices = services.filter(s => 
+                s && 
+                s.service_name.toLowerCase().indexOf('điện') === -1 && 
+                s.service_name.toLowerCase().indexOf('nước') === -1
+            );
+            
+            container.innerHTML = additionalServices.length ? additionalServices.map(s => `
+                <label class="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer rounded-lg">
+                    <input type="checkbox" value="${s.service_id}" class="service-checkbox w-4 h-4 accent-green-600">
+                    <span class="text-xs font-bold">${s.service_name} (${Number(s.price).toLocaleString()}đ)</span>
+                </label>`).join('') : '<p class="p-3 text-xs text-gray-400 italic">Không có dịch vụ thêm nào được tạo</p>';
+        }
+    } catch (err) {
+        console.error("Lỗi load dữ liệu Modal:", err);
+    }
+};
+        window.markAsPaid = async (id) => {
+            if(confirm("Xác nhận khách đã thanh toán?")) {
+                const res = await apiRequest(`/invoice/pay/${id}`, 'PUT');
+                if (res && res.success) window.loadInvoices();
+            }
+        };
+
+        document.getElementById('generateInvoiceForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const periodInput = document.getElementById('invoicePeriodInput').value;
+            if (!periodInput) return alert("Vui lòng chọn tháng/năm!");
+            
+            const period = periodInput.split('-'); 
+            const selectedServices = Array.from(document.querySelectorAll('.service-checkbox:checked')).map(cb => cb.value);
+
+            const res = await apiRequest('/invoice/generate', 'POST', {
+                contract_id: formData.get('contract_id'),
+                month: parseInt(period[1]),
+                year: parseInt(period[0]),
+                selected_services: selectedServices
+            });
+
+            if (res && res.success) {
+                alert("Xuất hóa đơn thành công!");
+                window.closeModal('modalGenerateInvoice');
+                window.loadInvoices();
+            }
+        };
+
+        window.openGenerateModal = () => {
+            document.getElementById('invoicePeriodInput').value = `${currentFilterYear}-${String(currentFilterMonth).padStart(2, '0')}`;
+            window.openModal('modalGenerateInvoice');
+        };
+
+        // KHỞI TẠO CẤU HÌNH
+        flatpickr("#filterInvoicePeriod", {
+            plugins: [new monthSelectPlugin({ shorthand: true, dateFormat: "Y-m", altFormat: "F Y" })],
+            defaultDate: new Date(2026, 1),
+            onChange: (selectedDates) => {
+                if (selectedDates.length > 0) {
+                    currentFilterMonth = selectedDates[0].getMonth() + 1;
+                    currentFilterYear = selectedDates[0].getFullYear();
+                    window.loadInvoices();
+                }
+            }
+        });
+
+        window.loadInvoices();
+        window.loadFormData();
+    </script>
+
+    <script>
+        // Các hàm giao diện dùng chung
+        window.openModal = (id) => { 
+            const m = document.getElementById(id);
+            if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+        };
+        window.closeModal = (id) => { 
+            const m = document.getElementById(id);
+            if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+        };
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+    </script>
+</body>
+</html>

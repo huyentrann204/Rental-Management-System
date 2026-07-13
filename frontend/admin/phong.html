@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Phòng - MotelMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-bg: #F4FBF4; --main-bg: #f9fafb; --card-bg: #ffffff;
+            --text-main: #4b5563; --active-green: #BEE9BE;
+        }
+        body.dark {
+            --sidebar-bg: #111111; --main-bg: #000000; --card-bg: #1a1a1a; 
+            --text-main: #f3f4f6;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--main-bg); color: var(--text-main); transition: 0.3s; }
+        .sidebar-bg { background-color: var(--sidebar-bg); }
+        .nav-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.75rem; transition: 0.2s; font-weight: 600; }
+        .nav-item:hover { background-color: rgba(0,0,0,0.05); }
+        .dark .nav-item:hover { background-color: rgba(255,255,255,0.05); }
+        .nav-active { background-color: var(--active-green) !important; color: #2E7D32 !important; }
+        
+        .card-style { 
+            background-color: var(--card-bg); border-radius: 1.5rem; 
+            border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+        .dark .card-style { border: 1px solid #27272a; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 sidebar-bg h-full border-r border-gray-100 dark:border-zinc-800 flex flex-col shrink-0 transition-colors">
+        <div class="p-6 mb-4 flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white text-xl shadow-lg shadow-green-100">
+                <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <span class="font-bold text-xl text-green-800 dark:text-green-400 tracking-tight">MotelMS</span>
+        </div>
+
+        <nav class="flex-1 px-4 overflow-y-auto">
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase mb-4 tracking-widest">Nghiệp vụ</p>
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-line w-6 text-xl"></i> <span>Tổng Quan</span></a>
+                <a href="hoa-don.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-file-invoice-dollar w-6 text-xl"></i> <span>Hóa Đơn</span></a>
+            </div>
+
+            <div class="mb-6">
+                <p class="px-3 text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase mb-4 tracking-widest">Dữ liệu</p>
+                <a href="phong.html" class="nav-item nav-active"><i class="fa-solid fa-door-open w-6 text-xl"></i> <span>Phòng</span></a>
+                <a href="dich-vu.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-wifi w-6 text-xl"></i> <span>Dịch Vụ</span></a>
+                <a href="dien-nuoc.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-bolt w-6 text-xl"></i> <span>Điện Nước</span></a>
+                <a href="khach-hang.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-user-group w-6 text-xl"></i> <span>Khách Hàng</span></a>
+                <a href="hop-dong.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-file-contract w-6 text-xl"></i> <span>Hợp Đồng</span></a>
+            </div>
+
+            <div class="mt-auto pb-6 border-t border-gray-100 dark:border-zinc-800 pt-4">
+                <p class="px-3 text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase mb-4 tracking-widest">Hệ thống</p>
+                <a href="cai-dat.html" class="nav-item dark:text-zinc-300"><i class="fa-solid fa-gear w-6 text-xl"></i> <span>Cài Đặt Chung</span></a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-8 shrink-0 relative transition-colors">
+            <div class="relative w-96 group">
+                <div class="bg-gray-50 dark:bg-zinc-900 px-4 py-2 rounded-full border border-gray-100 dark:border-zinc-800 flex items-center gap-3 text-gray-400 group-focus-within:border-green-300 transition-all shadow-sm">
+                    <i class="fas fa-search text-xs"></i>
+                    <input type="text" id="global-search" oninput="liveSearch(this.value)" placeholder="Tìm kiếm tính năng..." 
+                        class="bg-transparent outline-none text-sm w-full text-gray-600 dark:text-zinc-300 placeholder-gray-400">
+                </div>
+                <div id="search-results" class="hidden absolute top-full left-0 w-full bg-white dark:bg-[#121212] shadow-2xl border border-gray-100 dark:border-zinc-800 rounded-b-xl z-50 mt-1 max-h-64 overflow-y-auto">
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="openModal('modalRoomType')" class="bg-white dark:bg-zinc-900 border border-green-600 text-green-700 dark:text-green-400 px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-50 transition-all">
+                    + Tạo Loại Phòng
+                </button>
+                <button onclick="openModal('modalRoom')" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-green-100 hover:bg-green-700 transition-all">
+                    + Tạo Phòng Mới
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 p-10 overflow-y-auto">
+            <h1 class="font-bold text-2xl text-gray-800 dark:text-zinc-100 mb-8 uppercase tracking-wide ">QUẢN LÝ PHÒNG</h1>
+            
+            <div class="card-style bg-white dark:bg-[#1e1e1e] p-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-[11px] font-bold text-gray-400 dark:text-zinc-300 uppercase tracking-widest border-b border-gray-50 dark:border-zinc-800">
+                            <tr>
+                                <th class="pb-4">Mã phòng</th>
+                                <th class="pb-4">Loại phòng</th>
+                                <th class="pb-4 text-center">Tình trạng</th>
+                                <th class="pb-4 text-center">Trạng thái</th>
+                                <th class="pb-4 text-right">Giá thuê</th>
+                                <th class="pb-4 text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roomDataBody"></tbody>
+                    </table>
+
+                    <div id="noDataPlaceholder" class="flex flex-col items-center justify-center py-24 hidden">
+                        <i class="fa-regular fa-folder-open text-6xl text-gray-200 dark:text-zinc-700 mb-6"></i>
+                        <p class="text-xl font-bold text-gray-400 dark:text-zinc-500 italic">Không tìm thấy dữ liệu phòng...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalRoomType" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 transition-all">
+        <div class="bg-white dark:bg-[#1a1a1a] rounded-3xl w-full max-w-[400px] p-8 shadow-2xl">
+            <h3 class="font-bold text-xl text-gray-800 dark:text-zinc-100 mb-6 text-center italic">Thông tin loại phòng</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tên loại phòng</label>
+                    <input type="text" id="typeName" placeholder="Vd: Phòng Gác Lửng..." class="w-full mt-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none dark:text-white border-none font-bold">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Giá thuê (đ/tháng)</label>
+                    <input type="number" id="typePrice" placeholder="Vd: 3500000" class="w-full mt-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none dark:text-white border-none font-bold">
+                </div>
+                <div class="flex gap-4 pt-6">
+                    <button onclick="closeModal('modalRoomType')" class="flex-1 py-3 font-bold text-gray-400">Hủy</button>
+                    <button id="saveTypeBtn" class="flex-1 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-all">Lưu lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalRoom" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 transition-all">
+        <div class="bg-white dark:bg-[#1a1a1a] rounded-3xl w-full max-w-[400px] p-8 shadow-2xl">
+            <h3 class="font-bold text-xl text-gray-800 dark:text-zinc-100 mb-6 text-center italic">Tạo phòng chi tiết</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Chọn Loại Phòng</label>
+                    <select id="selectType" class="w-full mt-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none dark:text-white border-none font-bold">
+                        <option value="">-- Danh sách loại phòng --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Trạng thái phòng</label>
+                    <select id="roomStatus" class="w-full mt-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none dark:text-white border-none font-bold">
+                        <option value="available">Còn trống (Available)</option>
+                        <option value="occupied">Đã có người (Occupied)</option>
+                        <option value="maintenance">Đang sửa chữa (Maintenance)</option>
+                        <option value="reserved">Đã đặt cọc (Reserved)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Số hiệu phòng</label>
+                    <input type="text" id="roomNum" placeholder="Vd: 101" class="w-full mt-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl outline-none text-center text-2xl font-black dark:text-white border-none">
+                </div>
+                <div class="flex gap-4 pt-6">
+                    <button onclick="closeModal('modalRoom')" class="flex-1 py-3 font-bold text-gray-400">Hủy</button>
+                    <button id="saveRoomBtn" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all">Tạo phòng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { apiRequest } from '../assets/js/api.js';
+
+        // DANH MỤC TÌM KIẾM ĐỒNG BỘ Y CHANG DASHBOARD
+        const menuItems = [
+            { name: 'Tổng Quan', link: 'dashboard.html', icon: 'fa-chart-line' },
+            { name: 'Hóa Đơn', link: 'hoa-don.html', icon: 'fa-file-invoice-dollar' },
+            { name: 'Phòng', link: 'phong.html', icon: 'fa-door-open' },
+            { name: 'Dịch Vụ', link: 'dich-vu.html', icon: 'fa-wifi' },
+            { name: 'Điện Nước', link: 'dien-nuoc.html', icon: 'fa-bolt' },
+            { name: 'Khách Hàng', link: 'khach-hang.html', icon: 'fa-user-group' },
+            { name: 'Hợp Đồng', link: 'hop-dong.html', icon: 'fa-file-contract' },
+            { name: 'Cài Đặt', link: 'cai-dat.html', icon: 'fa-gear' }
+        ];
+
+        window.liveSearch = (val) => {
+            const res = document.getElementById('search-results');
+            const term = val.toLowerCase().trim();
+            if (!term) { res.classList.add('hidden'); return; }
+
+            const filtered = menuItems.filter(item => item.name.toLowerCase().includes(term));
+            res.classList.remove('hidden');
+            
+            if (filtered.length > 0) {
+                res.innerHTML = filtered.map(item => `
+                    <a href="${item.link}" class="flex items-center gap-3 p-3 hover:bg-green-50 transition border-b border-gray-50 dark:border-zinc-800">
+                        <i class="fa-solid ${item.icon} text-green-600 w-5 text-center"></i>
+                        <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">${item.name}</span>
+                    </a>
+                `).join('');
+            } else {
+                res.innerHTML = '<p class="p-4 text-xs text-gray-400 italic text-center">Không tìm thấy tính năng này</p>';
+            }
+        };
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.group')) document.getElementById('search-results').classList.add('hidden');
+        });
+    </script>
+
+    <script type="module" src="../assets/js/phong.js"></script>
+
+    <script>
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    </script>
+</body>
+</html>

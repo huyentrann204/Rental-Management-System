@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Motel Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* GIỮ NGUYÊN TÊN CLASS CỦA MÀY NHƯNG NÂNG CẤP STYLE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            height: 100vh; 
+            overflow: hidden;
+            /* Đưa ảnh nền ra toàn trang */
+            background: url('../assets/images/background.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hiệu ứng lớp phủ tối để nổi bật ô đăng nhập */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        .auth-container { 
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* BIẾN Ô ĐĂNG NHẬP THÀNH DẠNG KÍNH MỜ */
+        .auth-box { 
+            width: 100%; 
+            max-width: 420px; 
+            background: rgba(255, 255, 255, 0.85); /* Trắng mờ */
+            backdrop-filter: blur(15px); /* Làm mờ hậu cảnh */
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
+        .auth-logo-icon { font-size: 40px; }
+        .auth-logo-text { font-size: 24px; font-weight: 700; color: #77C47C; }
+        
+        .auth-title { text-align: center; font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+        .auth-subtitle { text-align: center; color: #555; font-size: 14px; margin-bottom: 32px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px; }
+        
+        .input-wrapper { position: relative; }
+        .form-input { 
+            width: 100%; 
+            padding: 12px 16px; 
+            padding-right: 40px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            border-radius: 12px; 
+            font-size: 14px; 
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .form-input:focus { outline: none; border-color: #77C47C; box-shadow: 0 0 0 4px rgba(119, 196, 124, 0.15); }
+        
+        .input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
+
+        .form-links { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 13px; }
+        .remember-me { display: flex; align-items: center; gap: 8px; color: #444; cursor: pointer; }
+        .forgot-password { color: #77C47C; text-decoration: none; font-weight: 600; }
+
+        .btn-login { 
+            width: 100%; 
+            padding: 14px; 
+            background: #77C47C; 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(119, 196, 124, 0.3);
+        }
+        .btn-login:hover { background: #66b36b; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(119, 196, 124, 0.4); }
+
+        .divider { display: flex; align-items: center; margin: 24px 0; color: #777; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.1); }
+        .divider::before { margin-right: 12px; }
+        .divider::after { margin-left: 12px; }
+
+        .register-link { text-align: center; color: #555; font-size: 14px; }
+        .register-link a { color: #77C47C; text-decoration: none; font-weight: 700; }
+
+        .alert { padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; display: none; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <span class="auth-logo-icon">🏠</span>
+                <span class="auth-logo-text">Motel System</span>
+            </div>
+            <h1 class="auth-title">Đăng nhập</h1>
+            <p class="auth-subtitle">Chào mừng quay trở lại hệ thống</p>
+
+            <div id="alertBox" class="alert alert-error"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email/SDT</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" class="form-input" placeholder="admin@gmail.com" required>
+                        <span class="input-icon"><i class="fas fa-user"></i></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" class="form-input" placeholder="********" required>
+                        <span class="input-icon" id="togglePassword"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+
+                <div class="form-links">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Ghi nhớ</span>
+                    </label>
+                    <a href="forgot-password.html" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="btn-login">Đăng nhập</button>
+            </form>
+
+            <div class="divider">Hoặc</div>
+
+            <div class="register-link">
+                Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./login.js"></script>
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = togglePassword.querySelector('i');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            eyeIcon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "rental-management-backend",
+  "version": "1.0.0",
+  "description": "Backend REST API for the Rental Management System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "rest-api",
+    "rental-management",
+    "sql-server"
+  ],
+  "author": "HCMUS OOAD Team",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mssql": "^12.2.0",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.13"
+  }
+}
