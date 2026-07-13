@@ -142,7 +142,7 @@ The dashboard enables landlords to monitor key business metrics in real time, in
 
 ## Invoice Management
 
-![Invoices](docs/screenshots/invoices.png)
+![Invoices](docs/screenshots/Invoices.png)
 
 ---
 
